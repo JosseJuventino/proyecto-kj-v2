@@ -42,6 +42,13 @@ export interface Project {
   __v: number;
 }
 
+export interface FinishedProject {
+  _id: string;
+  idProject: string;
+  startDate: string;
+  finishedDate: string;
+}
+
 export interface User {
   _id: string;
   name: string;
@@ -50,7 +57,7 @@ export interface User {
   internalHours: number;
   externalHours: number;
   projectsActives: (string | null)[];
-  finishedProjects: (string | null)[];
+  finishedProjects: FinishedProject[];
   projectFavorites: (string | null)[];
   isAdmin: boolean;
   isTutor: boolean;

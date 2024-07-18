@@ -35,37 +35,28 @@ const ensureUserArrayFields = (user: User): User => {
   return user;
 };
 
-export const getUserById = async (id: string): Promise<User | {}> => {
-  try {
-    const response = await api.get(`user/${id}`);
-    if (response.status === 200 && isValidUser(response.data.data)) {
-      return ensureUserArrayFields(response.data.data as User);
-    } else {
-      console.error("Invalid response format:", response.data);
-      return {};
-    }
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.message);
-    } else {
-      console.error("Unexpected error:", error);
-    }
-    return {};
-  }
-};
-
 export const updateUser = async (
   email: string,
   formData: Partial<Omit<User, "_id" | "__v">>
-): Promise<User> => {
+): Promise<void> => {
   try {
     const response = await api.put(`user/${email}`, formData, {
       headers: {
         "Content-Type": "application/json",
       },
     });
-    if (isValidUser(response.data)) {
-      return ensureUserArrayFields(response.data as User);
+
+    console.log("API Response:", response.data); // Log the full API response for debugging
+
+    // Handle message response
+    if (response.data.message === "User updated") {
+      const userData = response.data.data;
+      if (isValidUser(userData)) {
+        ensureUserArrayFields(userData as User);
+      } else {
+        console.error("Invalid user data format:", userData);
+        throw new Error("Invalid user data format");
+      }
     } else {
       console.error("Invalid response format:", response.data);
       throw new Error("Invalid response format");
@@ -82,6 +73,25 @@ export const updateUser = async (
         "Unexpected error occurred while updating the user. Please try again."
       );
     }
+  }
+};
+
+export const getUserById = async (id: string): Promise<User | {}> => {
+  try {
+    const response = await api.get(`user/${id}`);
+    if (response.status === 200 && isValidUser(response.data.data)) {
+      return ensureUserArrayFields(response.data.data as User);
+    } else {
+      console.error("Invalid response format:", response.data);
+      return {};
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.message);
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    return {};
   }
 };
 

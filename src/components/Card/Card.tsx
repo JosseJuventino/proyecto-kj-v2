@@ -74,37 +74,37 @@ export const Card: React.FC<CardProps> = ({ project, isClickeable = true, haveBu
     }
   };
 
-  async function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
-    e.stopPropagation();
-    setPopAnimation(true);
+async function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
+  e.stopPropagation();
+  setPopAnimation(true);
 
-    try {
-      let usuario = await getUserByEmail(user!.email);
+  try {
+    let usuario = await getUserByEmail(user!.email);
 
-      if (usuario) {
-        const updatedFavoritos = [...usuario.projectFavorites];
-        const index = updatedFavoritos.indexOf(project._id);
+    if (usuario) {
+      const updatedFavoritos = [...usuario.projectFavorites];
+      const index = updatedFavoritos.indexOf(project._id);
 
-        if (index !== -1) {
-          updatedFavoritos.splice(index, 1);
-        } else {
-          updatedFavoritos.push(project._id);
-        }
-
-        await updateUser(usuario.email, {
-          projectFavorites: updatedFavoritos,
-        });
-
-        setClickedFavorite((prevClickedFav) => !prevClickedFav);
-
-        setTimeout(() => {
-          setPopAnimation(false);
-        }, 1000);
+      if (index !== -1) {
+        updatedFavoritos.splice(index, 1);
+      } else {
+        updatedFavoritos.push(project._id);
       }
-    } catch (error) {
-      console.error("Error al actualizar favoritos", error);
+
+      await updateUser(usuario.email, {
+        projectFavorites: updatedFavoritos,
+      });
+
+      setClickedFavorite((prevClickedFav) => !prevClickedFav);
+
+      setTimeout(() => {
+        setPopAnimation(false);
+      }, 1000);
     }
+  } catch (error) {
+    console.error("Error al actualizar favoritos", error);
   }
+}
 
   return (
     <>
