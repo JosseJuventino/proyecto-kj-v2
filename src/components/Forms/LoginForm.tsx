@@ -23,7 +23,7 @@ const LoginForm: React.FC = () => {
           const usuarioMongo = await getUserByEmail(user.email);
           if (usuarioMongo) {
             if (usuarioMongo.isAdmin) {
-              router.push("/administrator/dashboard/inicio");
+              router.push("/administrator/");
             } else {
               router.push("/dashboard");
             }
