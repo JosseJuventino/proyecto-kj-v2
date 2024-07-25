@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { updateInscription } from "@/services/inscription.service";
+import { useState, useEffect } from "react";
+import { updateInscription, getInscriptions } from "@/services/inscription.service";
 import { generatePDF } from "@/utils/generatePDF";
 import {
   Table,
@@ -15,6 +15,7 @@ interface ProyectsAdminProps {
   rows: (string | number)[][];
   showAction?: boolean;
   showCheckbox?: boolean;
+  onStatusChange: () => void; // Prop para manejar cambios de estado
 }
 
 const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
@@ -22,10 +23,11 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
   rows,
   showAction,
   showCheckbox,
+  onStatusChange, // Recibe la función como prop
 }) => {
   const [selectedRowIndexes, setSelectedRowIndexes] = useState<number[]>([]);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
-  const [isDenialModalOpen, setIsDenialModalOpen] = useState(false); // Nuevo estado para el modal de denegación
+  const [isDenialModalOpen, setIsDenialModalOpen] = useState(false);
   const [isFileNameModalOpen, setIsFileNameModalOpen] = useState(false);
   const [fileName, setFileName] = useState(
     `Reporte_${new Date().toLocaleDateString().replace(/\//g, '-')}`
@@ -51,12 +53,13 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
       setIsApprovalModalOpen(false);
       setSelectedRowIndexes([]);
       setIsButtonDisabled(true);
+      onStatusChange(); // Notificar al componente padre sobre el cambio
     } catch (error) {
       console.error("Error al aprobar los proyectos:", error);
     }
   };
 
-  const handleDeny = async () => { // Nueva función para denegar
+  const handleDeny = async () => {
     try {
       for (const rowIndex of selectedRowIndexes) {
         const idInscription = rows[rowIndex][4] as string;
@@ -65,6 +68,7 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
       setIsDenialModalOpen(false);
       setSelectedRowIndexes([]);
       setIsButtonDisabled(true);
+      onStatusChange(); // Notificar al componente padre sobre el cambio
     } catch (error) {
       console.error("Error al denegar los proyectos:", error);
     }
@@ -104,7 +108,7 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
           <i className="ml-2 fa-solid fa-check"></i>
         </button>
         <button
-          onClick={() => setIsDenialModalOpen(true)} // Botón para denegar
+          onClick={() => setIsDenialModalOpen(true)}
           disabled={isButtonDisabled}
           className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400"
         >
@@ -136,7 +140,7 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
         </div>
       )}
 
-      {isDenialModalOpen && ( // Modal para denegar
+      {isDenialModalOpen && (
         <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-xl mb-4">Denegar Proyecto(s)</h2>

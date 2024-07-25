@@ -1,12 +1,11 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import { getInscriptions } from "@/services/inscription.service";
 import { Inscription } from "@/services/types";
 import TableProject from "@/components/Tables/TableProject";
 
 const Inscriptions: React.FC = () => {
-
-    const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
+  const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
 
   const getData = async () => {
     try {
@@ -21,6 +20,10 @@ const Inscriptions: React.FC = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  const handleStatusChange = () => {
+    getData(); // Refresca los datos después de una actualización
+  };
 
   const header = ["Estudiante", "Proyecto", "Correo", "Estado"];
 
@@ -40,11 +43,12 @@ const Inscriptions: React.FC = () => {
               inscription.status,
               inscription._id,
             ])}
+            onStatusChange={handleStatusChange} // Pasar la función de actualización
           />
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Inscriptions;
