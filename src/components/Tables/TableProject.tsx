@@ -25,6 +25,7 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
 }) => {
   const [selectedRowIndexes, setSelectedRowIndexes] = useState<number[]>([]);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
+  const [isDenialModalOpen, setIsDenialModalOpen] = useState(false); // Nuevo estado para el modal de denegación
   const [isFileNameModalOpen, setIsFileNameModalOpen] = useState(false);
   const [fileName, setFileName] = useState(
     `Reporte_${new Date().toLocaleDateString().replace(/\//g, '-')}`
@@ -52,6 +53,20 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
       setIsButtonDisabled(true);
     } catch (error) {
       console.error("Error al aprobar los proyectos:", error);
+    }
+  };
+
+  const handleDeny = async () => { // Nueva función para denegar
+    try {
+      for (const rowIndex of selectedRowIndexes) {
+        const idInscription = rows[rowIndex][4] as string;
+        await updateInscription(idInscription, { status: "denegado" });
+      }
+      setIsDenialModalOpen(false);
+      setSelectedRowIndexes([]);
+      setIsButtonDisabled(true);
+    } catch (error) {
+      console.error("Error al denegar los proyectos:", error);
     }
   };
 
@@ -88,6 +103,14 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
           Aprobar
           <i className="ml-2 fa-solid fa-check"></i>
         </button>
+        <button
+          onClick={() => setIsDenialModalOpen(true)} // Botón para denegar
+          disabled={isButtonDisabled}
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400"
+        >
+          Denegar
+          <i className="ml-2 fa-solid fa-times"></i>
+        </button>
       </div>
 
       {isApprovalModalOpen && (
@@ -107,6 +130,29 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >
                 Aprobar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isDenialModalOpen && ( // Modal para denegar
+        <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl mb-4">Denegar Proyecto(s)</h2>
+            <p className="mb-4">¿Está seguro de que desea denegar los proyectos seleccionados?</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setIsDenialModalOpen(false)}
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeny}
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Denegar
               </button>
             </div>
           </div>
