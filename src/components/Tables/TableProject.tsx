@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getProjectByName } from "@/services/project.service";
+import { updateInscription } from "@/services/inscription.service";
 import { generatePDF } from "@/utils/generatePDF";
 import {
   Table,
@@ -23,38 +23,35 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
   showAction,
   showCheckbox,
 }) => {
-  const [isChecked, setIsChecked] = useState(false);
+  const [selectedRowIndexes, setSelectedRowIndexes] = useState<number[]>([]);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
   const [isFileNameModalOpen, setIsFileNameModalOpen] = useState(false);
   const [fileName, setFileName] = useState(
     `Reporte_${new Date().toLocaleDateString().replace(/\//g, '-')}`
   );
-  const [selectedRowData, setSelectedRowData] = useState<
-    (string | number)[] | null
-  >(null);
-  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  const handleRowClick = (rowData: (string | number)[], rowIndex: number) => {
-    setSelectedRowIndex(rowIndex === selectedRowIndex ? null : rowIndex);
-    setSelectedRowData(rowData);
-    setIsButtonDisabled(rowIndex === null);
+  const handleRowClick = (rowIndex: number) => {
+    setSelectedRowIndexes(prevIndexes => {
+      const newIndexes = prevIndexes.includes(rowIndex)
+        ? prevIndexes.filter(index => index !== rowIndex)
+        : [...prevIndexes, rowIndex];
+      setIsButtonDisabled(newIndexes.length === 0);
+      return newIndexes;
+    });
   };
 
   const handleApprove = async () => {
-    if (!selectedRowData) {
-      return;
-    }
-
-    const projectName = selectedRowData[1] as string;
-
     try {
-      const encodedProjectName = encodeURIComponent(projectName);
-      const response = await getProjectByName(encodedProjectName);
-      console.log(response);
+      for (const rowIndex of selectedRowIndexes) {
+        const idInscription = rows[rowIndex][4] as string;
+        await updateInscription(idInscription, { status: "aprobado" });
+      }
       setIsApprovalModalOpen(false);
+      setSelectedRowIndexes([]);
+      setIsButtonDisabled(true);
     } catch (error) {
-      console.error("Error al aprobar el proyecto:", error);
+      console.error("Error al aprobar los proyectos:", error);
     }
   };
 
@@ -96,8 +93,8 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
       {isApprovalModalOpen && (
         <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl mb-4">Aprobar Proyecto</h2>
-            <p className="mb-4">¿Está seguro de que desea aprobar el proyecto seleccionado?</p>
+            <h2 className="text-xl mb-4">Aprobar Proyecto(s)</h2>
+            <p className="mb-4">¿Está seguro de que desea aprobar los proyectos seleccionados?</p>
             <div className="flex justify-end space-x-4">
               <button
                 onClick={() => setIsApprovalModalOpen(false)}
@@ -162,10 +159,13 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
               {rows.map((rowData, rowIndex) => (
                 <TableRow
                   key={rowIndex}
-                  onClick={() => handleRowClick(rowData, rowIndex)}
-                  className={`${rowIndex === selectedRowIndex ? "bg-gray-300" : ""}`}
+                  onClick={() => handleRowClick(rowIndex)}
+                  className={`
+                    ${selectedRowIndexes.includes(rowIndex) ? "bg-gray-300" : ""}
+                    hover:${selectedRowIndexes.includes(rowIndex) ? "bg-gray-400" : "bg-gray-200"}
+                  `}
                 >
-                  {rowData.map((cellData, cellIndex) => (
+                  {rowData.slice(0, 4).map((cellData, cellIndex) => (
                     <TableCell key={cellIndex} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {cellData}
                     </TableCell>
@@ -174,8 +174,8 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <input
                         type="checkbox"
-                        checked={isChecked}
-                        onChange={() => setIsChecked(!isChecked)}
+                        checked={selectedRowIndexes.includes(rowIndex)}
+                        onChange={() => handleRowClick(rowIndex)}
                       />
                     </TableCell>
                   )}

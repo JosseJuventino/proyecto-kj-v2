@@ -50,8 +50,7 @@ const MenuAdmin: React.FC<MenuAdminProps> = ({ isOpen, toggleSidebar }) => {
         <nav className="w-full">
           <LinksMenu text="Inicio" icon="fa-solid fa-house" link="inicio" />
           <LinksMenu text="Proyectos" icon="fa-solid fa-chart-simple" link="proyects-admin" isCssIcon={false} />
-          <LinksMenu text="Circulos de Estudio" link="circulo-estudio" isCssIcon={true} />
-          <LinksMenu text="Inscripciones" link="inscripcion-admin" icon="fa-solid fa-users" />
+          <LinksMenu text="Inscripciones" link="/administrator/inscription" icon="fa-solid fa-users" />
           <LinksMenu text="Vista de usuario" link="/dashboard" icon="fa-solid fa-eye" />
         </nav>
         <div className="w-full mt-8">
