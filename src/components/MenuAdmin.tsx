@@ -41,7 +41,7 @@ const MenuAdmin: React.FC<MenuAdminProps> = ({ isOpen, toggleSidebar }) => {
           <button className="lg:hidden mb-4 text-white" onClick={toggleSidebar}>
             <i className="fa fa-times"></i>
           </button>
-          <Link href="/crear-proyecto" className="flex items-center p-4 text-white transition duration-500 rounded-md hover:bg-gray-700">
+          <Link href="/administrator/add-project" className="flex items-center p-4 text-white transition duration-500 rounded-md hover:bg-gray-700">
             <img className="w-6 mr-3" src="/images/logo_uca_blanco.png" alt="logo_uca" />
             <span className="text-sm lg:text-lg hidden lg:inline">Nuevo proyecto</span>
             <i className="ml-auto text-sm lg:text-lg fa-solid fa-pen-to-square"></i>
@@ -49,7 +49,7 @@ const MenuAdmin: React.FC<MenuAdminProps> = ({ isOpen, toggleSidebar }) => {
         </div>
         <nav className="w-full">
           <LinksMenu text="Inicio" icon="fa-solid fa-house" link="inicio" />
-          <LinksMenu text="Proyectos" icon="fa-solid fa-chart-simple" link="proyects-admin" isCssIcon={false} />
+          <LinksMenu text="Proyectos" icon="fa-solid fa-chart-simple" link="/administrator/projects" isCssIcon={false} />
           <LinksMenu text="Inscripciones" link="/administrator/inscription" icon="fa-solid fa-users" />
           <LinksMenu text="Vista de usuario" link="/dashboard" icon="fa-solid fa-eye" />
         </nav>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { updateInscription, getInscriptions } from "@/services/inscription.service";
-import { generatePDF } from "@/utils/generatePDF";
+import { generateExcel } from "@/utils/generatePDF";
 import {
   Table,
   TableBody,
@@ -85,7 +85,7 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
       return rowObj;
     });
 
-    generatePDF({ title, headers, rows: rowsData });
+    generateExcel({ title, headers, rows: rowsData });
     setIsFileNameModalOpen(false);
   };
 
@@ -96,8 +96,8 @@ const ProyectsAdmin: React.FC<ProyectsAdminProps> = ({
           onClick={() => setIsFileNameModalOpen(true)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          Generar PDF
-          <i className="ml-2 fa-solid fa-file-pdf"></i>
+          Generar Excel
+          <i className="ml-2 fa-solid fa-file-excel"></i>
         </button>
         <button
           onClick={() => setIsApprovalModalOpen(true)}

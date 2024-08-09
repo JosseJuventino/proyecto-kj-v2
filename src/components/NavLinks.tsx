@@ -12,17 +12,10 @@ const NavLinks: React.FC<NavLinksProps> = ({ user, modal }) => {
   const renderLinks = () => {
     let isRenderTutor: LinksHeader[] = [...linksLoggedIn];
 
-    if (user?.isTutor) {
-      isRenderTutor.push({
-        text: 'Tutorias',
-        href: '/dashboard/projects/circulos-estudio/panel',
-      });
-    }
-
     if (user?.isAdmin) {
       isRenderTutor.push({
         text: 'Administrar',
-        href: '/administrator/dashboard/inicio',
+        href: '/administrator',
       });
     }
 

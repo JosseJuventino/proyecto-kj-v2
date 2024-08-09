@@ -31,22 +31,6 @@ const HomeAdmin: React.FC = () => {
           <Count />
         </div>
       </div>
-      <div className="bg-white rounded-xl p-8">
-        <div>
-          <h1 className="mr-auto my-5 text-3xl">Ultimas Inscripciones</h1>
-        </div>
-        <div className="w-full">
-          <TableProject
-            header={header}
-            rows={inscriptions.map((inscription) => [
-              inscription.userName,
-              inscription.projectName,
-              inscription.emailUser,
-              inscription.status,
-            ])}
-          />
-        </div>
-      </div>
     </div>
   );
 };

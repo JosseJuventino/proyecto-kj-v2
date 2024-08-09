@@ -36,10 +36,11 @@ export interface Project {
   socialService: string;
   image: string;
   modality: string;
-  schedule: string;
+  shedule: string;
   moreInformation: string;
   careers: string[];
-  __v: number;
+  status?: string;
+  __v?: number;
 }
 
 export interface FinishedProject {
